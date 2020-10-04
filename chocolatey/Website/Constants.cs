@@ -43,6 +43,7 @@ namespace NuGetGallery
         public const string PopularitySortOrder = "package-download-count";
         public const string RecentSortOrder = "package-created";
         public const string RelevanceSortOrder = "relevance";
+        public const string OldestSortOrder = "oldest";
 
         public const string SubmittedModerationStatus = "submitted-status";
         public const string PendingModerationStatus = "pending-status";

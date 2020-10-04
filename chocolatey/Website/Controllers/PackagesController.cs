@@ -376,7 +376,7 @@ namespace NuGetGallery
                         packagesToShow = packagesToShow.OrderBy(p => p.Title);
                         break;
                     case SortProperty.Recent:
-                        packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                        packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                         break;
                     default:
                         //do not change the search order
@@ -393,7 +393,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             default:
                                 //do not change the search order
@@ -409,7 +409,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packagesToShow.OrderByDescending(p => p.DownloadCount);
@@ -427,7 +427,7 @@ namespace NuGetGallery
                                 packagesToShow = packageVersions.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packageVersions.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packageVersions.OrderByDescending(p => p.DownloadCount);
@@ -446,7 +446,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packagesToShow.OrderByDescending(p => p.DownloadCount);
@@ -465,7 +465,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packagesToShow.OrderByDescending(p => p.DownloadCount);
@@ -484,7 +484,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packagesToShow.OrderByDescending(p => p.DownloadCount);
@@ -503,7 +503,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packagesToShow.OrderByDescending(p => p.DownloadCount);
@@ -522,7 +522,7 @@ namespace NuGetGallery
                                 packagesToShow = packagesToShow.OrderBy(p => p.Title);
                                 break;
                             case SortProperty.Recent:
-                                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+                                packagesToShow = OrderByRecent(searchFilter, packagesToShow);
                                 break;
                             case SortProperty.DownloadCount:
                                 packagesToShow = packagesToShow.OrderByDescending(p => p.DownloadCount);
@@ -597,6 +597,20 @@ namespace NuGetGallery
             ViewBag.SearchTerm = q;
 
             return View("~/Views/Packages/ListPackages.cshtml", viewModel);
+        }
+
+        private static IEnumerable<Package> OrderByRecent(SearchFilter searchFilter, IEnumerable<Package> packagesToShow)
+        {
+            if (searchFilter.SortDirection == SortDirection.Descending)
+            {
+                packagesToShow = packagesToShow.OrderByDescending(p => p.Published);
+            }
+            else
+            {
+                packagesToShow = packagesToShow.OrderBy(p => p.Published);
+            }
+
+            return packagesToShow;
         }
 
         // NOTE: Intentionally NOT requiring authentication
@@ -898,6 +912,11 @@ namespace NuGetGallery
                     break;
                 case Constants.RecentSortOrder:
                     searchFilter.SortProperty = SortProperty.Recent;
+                    searchFilter.SortDirection = SortDirection.Descending;
+                    break;
+                case Constants.OldestSortOrder:
+                    searchFilter.SortProperty = SortProperty.Recent;
+                    searchFilter.SortDirection = SortDirection.Ascending;
                     break;
                 case Constants.PopularitySortOrder:
                     searchFilter.SortProperty = SortProperty.DownloadCount;
@@ -934,20 +953,6 @@ namespace NuGetGallery
                     break;
             }
             return searchFilter;
-        }
-
-        private static string GetSortExpression(string sortOrder)
-        {
-            switch (sortOrder)
-            {
-                case Constants.AlphabeticSortOrder:
-                    return "PackageRegistration.Id";
-                case Constants.RecentSortOrder:
-                    return "Published desc";
-                case Constants.PopularitySortOrder:
-                default:
-                    return "PackageRegistration.DownloadCount desc";
-            }
         }
 
         private static string EnsureTrailingSlash(string siteRoot)
