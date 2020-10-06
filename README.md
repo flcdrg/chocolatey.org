@@ -1,10 +1,11 @@
-## Chocolatey.org
+# Chocolatey.org
 
 http://chocolatey.org
 
 ## CONTRIBUTING
 
 ### Getting started
+
  1. Before starting, you will need:
     1. Node.js and npm installed globally
        * `choco install nodejs-lts -y`
@@ -22,14 +23,21 @@ http://chocolatey.org
  1. If prompted, restore any missing NuGet packages (Don't use `nuget restore` from the command-line as this will pull in extra packages that cause the build to break)
  1. Run the **Update-Database** command in Package Manager Console (if the command is not found, try reloading the solution in Visual Studio)
  1. The database named in the connection string should now exist in your SQL Server.
+ 1. Sign up for [reCAPTCHA developer keys](https://www.google.com/recaptcha/admin/create).
+    * Select **reCAPTCHA v3**.
+    * Use `localhost` for the **domain**.
+    * Copy the **Site Key** and past into **reCAPTCHA::PublicKey** in web.config.
+    * Copy the **Secret Key** and past into **reCAPTCHA::PrivateKey** in web.config.
  1. Press **F5** to start the web application
  1. You may experience an error of `The CodeDom provider type Microsoft.VisualC.CppCodeProvider could not be located`. This is due to what Visual Studio thinks are header files in the `chocolatey\Website\node_modules` folder. Make that hidden (just the top level `node_modules` folder).
  1. Press **F5** to start the web application
  1. Your web browser should launch, showing the Chocolatey home page
  1. Head to Find Packages and then sign up, entering details to create a new account
  1. To make this account an administrator, run the following SQL against your new database eg. Use [**SQL Server Management Studio**](https://chocolatey.org/packages/sql-server-management-studio) or **sqlcmd** from the command line.
+
 *Note: Replace 'username' with the name of the user account you just created*
-```
+
+```sql
 DECLARE @adminId int
 SELECT @adminId = [Key] FROM Roles WHERE Name = 'Admins'
 
@@ -38,7 +46,8 @@ SELECT @userId = [Key] FROM Users where Username = 'username'
 
 INSERT INTO UserRoles(UserKey, RoleKey) VALUES(@userId, @adminId)
 ```
- 13. You should now be up and running!
+
+16. You should now be up and running!
 
 ### Known issues
 
